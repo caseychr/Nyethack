@@ -1,0 +1,379 @@
+Big Nerd Ranch Kotlin
+
+WHEN -> Like if/else, WHEN expression allows you to write conditions to check for and will execute corresponding code when the condition evaludates as true.
+Kind of seems like a switch statement.
+
+Instead of:
+
+    val hs = if(hp==100) {
+    	println(yay)
+    } else if(hp in 50..99) {
+    	println(has some scratches)
+    } else {
+    	println(oh no)
+    }
+
+It would be:
+
+    val hs = when (hp) {
+            100 -> println(yay)
+            in 50..99 -> println(has some scratches)
+            else -> println(oh no)
+        }
+
+Functions
+
+								    PARAMETERS							RETURN TYPE
+    private fun formatHealthStatus(healthPoints: Int, isBlessed: Boolean): String {
+        val healthStatus = when (healthPoints) {
+            100 -> "is in excellent condition!"
+            in 90..99 -> "has a  few scratches"
+            in 75..89 -> if(isBlessed) {
+                "has some minor wounds but is healing quite quickly!"
+            } else {
+                "has some minor wounds."
+            }
+            in 15..74 -> "look pretty hurt."
+            else -> "is in awful condition!"
+        }
+        return healthStatus
+    }
+
+							PARAMETERS -> set default = 2 if no parameter passed Also no return type here. This is called Unit
+    private fun castFireball(numFireballs: Int=2) {
+        println("A glass of Fireball springs into existence. (X$numFireballs)")
+    }
+
+Anonymous functions can hold a function type. It can also be passed arguments like regulat functions:
+Anonymous functions  are LAMBDAS or LAMBDA EXPRESSIONS
+
+ANONYMOUS FUNCTION
+					  PARA TYPE	 FUN TYPE    PARAMETERS
+    val greetingFunction: (String) -> String = { playerName ->
+    	val currentYear = 2018
+    	"Welcome to SimVillage. $playerName!"
+    	println(greetingFunction("Guyal"))
+    }
+
+Passing and Returning functions to/from functions
+
+A Function can take another function (or the shell of another function) as a parameter
+
+
+    fun runSim(playerName: String, greetFunction:(String, Int) -> String) {
+    	val numBuildings = (1..3).shuffled().last()
+    	println(greetingFunction(playerName, numBuildings))
+    }
+
+A function can also return another function (or the shell of another function)
+
+    fun configureGreetingFunction(): (String) -> String {
+        val structureType = "hospitals"
+        var numBuildings = 5
+        return { playerName: String ->
+            val currentYear = 2018
+            numBuildings += 1
+            println("Adding $numBuildings $structureType")
+            "Welcome to SimVillage, $playerName! (copyright $currentYear)"}
+    }
+
+Inlining
+
+Lambdas can have an affect on memory and performance. Using "inline" removes the need for the JVM to use an object instance and to perform variable memory allocations for the lambda
+
+    inline fun runSim(playerName: String, greetFunction:(String, Int) -> String) {
+	   val numBuildings = (1..3).shuffled().last()
+	   println(greetingFunction(playerName, numBuildings))
+    }
+
+Null
+
+Nullability of a variable must be marked like this: String?
+
+When you are working with variables you do not control you should still check for null types with a safe call operator (?.)
+    Ex. var beverage = readLine()?.capitalize()
+
+another null check that is simple is the elvis expression (?:):
+    Ex. val beverageServed: String = beverage ?: "Buttered Ale"
+
+
+Standard Functions
+
+*** Commonly we refer to the instance of a type as the RECEIVER
+
+1) APPLY - It can be thought of as a configuration function. It allows you to call a series of functions on a receiver to configure it for use. So intead of 
+
+    val menuFile = File("menu-file.txt")
+    menuFile.setReadable(true)
+    menuFile.setWritable(true)
+
+you can use apply as
+
+    val menuFile = File("menu-file.txt").apply {
+        setReadable(true)
+        setWritable(true)
+    }
+
+2) LET - this scopes a variable to the lambda provided and makes the keyword 'IT' available for use. So instead of
+
+    val firstElement - listOf(1,2,3).first()
+    val firstItemSquared = firstElement*firstElement
+
+you can use let as
+
+    val firstItemSquared = listOf(1,2,3).first().let{
+        it*it
+    }
+
+Another comparison here is:
+
+WITHOUT LET:
+    fun formatGreeting(vipGuest: String?): String {
+        return if(vipGuest != null) {
+        "Welcome, $vipGuest"
+        } else {
+        "Welcome to the tavern."
+        }
+    }
+
+WITH LET: (Here LET is called on the nullable string, vipGuest. The lambda passed to LET accepts the receiver it is called on as its only argument, You can then access the argument using IT keyword)
+    fun formatGreeting(vipGuest: String?): String {
+        return vipGuest?.let {"Welcome, $it" } :? "Welcome to the tavern."
+    }
+
+LET can be called on any kind of receiver and returns the result of evaluating the lambda you provide.
+
+There are several differences between LET and APPLY worth mentioning. As seen above LET passes the receiver to the lambda you provide, but APPLY returns the current receiver once the anonymous function completes. LET, on the other hand, returns the last line of the lambda, the lambda result.
+
+
+3) RUN - RUN is similar to APPLY in that it provides the same relative scoping behavior. However RUN does NOT return the receiver.
+
+    val menuFile = File("menu-file.txt")
+    val servesDragonsBreath = menuFile.run {
+        readText().contains("Dragon's Breath")
+    }
+
+Here the read text function is implicitly performed on the receiver in this case the File instance, menuFile. This is just like APPLY with setReadable and setWritable but instead of returning to the receiver RUN returns the lambda result as true or false
+
+
+4) WITH - it is a variation of RUN and behaves identically. WITH does require its argument to be accepted as the 1st parameter instead of calling the standard functionson a receiver type.
+
+    val nameTooLong = with("Polarcubis, Supreme Master of NyetHack"){ length >= 20 }
+
+The recommendation is to use RUN instead of WITH whenever possible because it is less consistent with the other functions than RUN is.
+
+
+5) ALSO - works very similar to LET but with one major difference. ALSO returns the receiver rather than the result of the lambda.
+This makes also especially useful for adding multiple side effects from a common source.
+
+    var fileContents: List<String>
+    File("file.txt").also{print(it.name)}.also{fileContents = it.readLines()}
+
+The advantage here is that you can continue to chain additional function calls on to the original receiver.
+
+
+6) TAKEIF - this works quite differently than the other standard functions. It evaluates a condition provided in a lambda, called a predicate, that returns either true or false
+depending on the condition defined. If the condition evaluates as true, the receiver is returned from TAKEIF. If the condition is false, null is returned instead.
+
+WITHOUT TAKEIF:
+    val file = File("myfile.txt")
+    val fileContents = if(file.canRead() && file.canWrite()) {file.readText()} else {null}
+
+WITH TAKEIF:
+    val fileContents = File("myfile.txt").takeIf {it.canRead() && it.canWrite()}?.readText()
+
+Conceptually, TAKEIF is similar to an if statement, but with advantage of being directly callable on an instance, often allowing you to remove temporary variable assignment.
+
+
+7) TAKEUNLESS - Try not to use it every unless you absolutely have to!!!
+It is just like TAKEIF except that it returns the original value if the condition you define is false.
+
+    val fileContents = File("myfile.txt").takeUnless{it.isHidden}?.readText()
+
+TAKEUNLESS is not problematic in useability just difficult to comprehend sometimes.
+
+
+STANDARD FUNCTIONS
+
+FUNCTION        Passes Receiver to Lambda as argument?              Provides relative scoping?          Returns:
+
+let                     YES                                             NO                              Lambda Result
+apply                   NO                                              YES                             Receiver
+run                     NO                                              YES                             Lambda Result
+with                    NO                                              YES                             Lambda Result
+also                    YES                                             NO                              Receiver
+takeIf                  YES                                             NO                              Nullable version of Receiver
+takeUnless              YES                                             NO                              Nullable version of Receiver
+
+
+
+Lists and Sets
+
+LISTOF returns a read only list populated with the elements you provide in the argument.
+
+    val patronList: List<String> = listOf("Eli", "Mordoc", "Sophie")
+
+We need to access elements of Lists and Arrays safely. Often trying to access a non existent element results in ARRAYINDEXOUTOFBOUNDSEXCEPTION. To avoid this being thrown we can use GETORELSE & GETORNULL.
+
+GETORELSE takes 2 arguments. The 1st is the requested index and the 2nd is a lambda that generates a default value, instead of an exception if the requested index does not exist.
+
+    EX.
+    val patronList = listOf("Eli", "Mordoc", "Sophie")
+    patronList.getOrElse(4) {"Unknown Patron"}
+
+Since there is no 4th element in the list Unknown Patron will be returned.
+
+GETORNULL can also be used as well. It'll return NULL instead of throwing an exception.
+
+    EX.
+    val fifthPatron = patronList.getOrNull(4) ?: "Unknown Patron"
+    fifthPatron
+
+Again, since there is no 4th element in the list Unknown Patron will be returned.
+
+
+
+In Kotlin, a modifiable list is known as a mutable list and you use the MUTABLELISTOF function to create one.
+
+    val patronList = mutableListOf("Eli", "Mordoc", "Sophie")
+
+You can then modify the list and the elements as needed i.e. use add(), remove(), etc.
+
+
+Iteration
+
+A regular for each loop would look like this:
+
+    for(patron in patronList) {
+        println($patron)
+    }
+
+notice the "in" in the loop parameter
+
+For a more function coding approach you can also use FOREACH:
+
+    patronList.forEach {patron ->
+    println($patron)}
+
+Now if you want to access the index as well you can use FOREACHINDEXED:
+
+    patronList.forEachIndexed {index, patron -> 
+        println("$patron -  you're #{index+1} in line.")
+    }
+
+File
+
+You can also read a file into a list using readText() and split().
+
+    val manuList = File("data/tavern-menu-items.txt").readText().split("\n")
+
+You can assign variable while running readText() and choose not to retrieve some data
+
+    val(type, name, price) = menuData.split(',')
+
+    val(type, _, price) = menuData.split(',')
+
+Sets
+
+To create a set you can use SETOF:
+
+    val planets = setOf("Mercury", "Venus", "Earth")
+
+
+
+Classes
+
+A class is often declared in a file matching its name, but it does not have to be. You can define multiple classes in the same file and you may want to if you have multiple classes used for a similar purpose
+
+You instantiate an instance of a class like this: val player = Player()
+
+For each property in a class you define, Kotlin auto generates a field, a getter and if needed a setter
+
+if you need to getters and setters can be overriden in the class to modify as needed. Also important note setters can only be generated for var NOT val.
+
+    Ex.
+    get() = field.capitalize()
+    set(value) { field = value.trim() }
+
+
+
+Constructors
+
+Kotlin, unlike Java, lets you initially definte the constructor in the header of the class.
+
+    Ex.
+    class Player(_name: String, _healthPoints: Int, _isBlessed: Boolean, _isImmortal: Boolean) {
+    var name = _name
+        get() = field.capitalize()
+        private set(value) { field = value.trim() }
+    var healthPoints = _healthPoints
+    val isBlessed = _isBlessed
+    private var isImmortal = _isImmortal
+    }
+
+Also instead of having to instantiate class variables and pass them from the constructor you can just do that in the header. Now no need to do 
+"var healthPoints = _healthPoints" and soforth.
+
+    Ex.
+    class Player(_name: String, var healthPoints: Int, val isBlessed: Boolean, private val isImmortal: Boolean) {
+    var name = _name
+        get() = field.capitalize()
+        private set(value) { field = value.trim() }
+        }
+
+You can also define what are called "secondary constructors" (the one in the header is the primary constructor). The parameters of the primary constructor are required for any secondary constructors. So a secondary construstor can still have a different function header but then must call the primary constructor and provide to it all the necessary parameters
+
+    Ex.
+    constructor(name: String) : this(name,
+        healthPoints = 100, isBlessed = true, isImmortal = false) {
+        if(name.toLowerCase() == "kar") healthPoints = 40
+    }
+
+
+In addition to constructors you can also setup an initializer block in each class. This is good for setting up variables or checking that arguments are valid ones. You can create preconditions by using require() function.
+
+    Ex.
+    init {
+        require(healthPoints > 0, {"healthPoints, must be greater than zero."})
+        require(name.isNotBlank(), {"Player must have a name"})
+    }
+
+Late initialization can become very important in Android. For variables that would require that they can have the modifier, LATEINIT. However now use as the coder are taking responsibility
+
+    Ex. lateinit var alignment: String
+
+Another form is lazy initialization which happens when the variable is first accessed. This becomes very useful an efficient. No the result of the lambda is passed to the variable.
+
+    Ex. val hometown by lazy {selectHometown()}    
+
+
+Inheritance
+
+In order for a class to be a parent of other classes you have to apend it with OPEN
+
+    Ex.
+    open class Room(val name: String) {
+
+    }
+
+Then subclasses can extend the parent class:
+
+    Ex.
+    class TownSquare : Room("Town Square") {
+
+    }
+
+If you want to override functions of the parent class the parent functions need to be modified with OPEN as well.
+
+    Ex. in Room class -> open fun load() = "......."
+        in TownSquare class -> override fun load() = "......"
+
+Just as every class inherits from Object in JAVA, every class in Kotlin inherits from ANY  -        ANY -> Room -> TownSquare
+
+
+
+
+
+
+
+
