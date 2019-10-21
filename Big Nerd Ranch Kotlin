@@ -371,9 +371,60 @@ If you want to override functions of the parent class the parent functions need 
 Just as every class inherits from Object in JAVA, every class in Kotlin inherits from ANY  -        ANY -> Room -> TownSquare
 
 
+Object
+In Kotlin there are 3 ways to use the object keyword: Object declaration, object expression, and companion objects.
 
+Object Declarations are useful for organization and state management, especially when you need to maintain some state
+consistently throughout the life span of your program.
 
+    Ex.
+    object Game {
 
+    }
 
+Because an object declaration is instantiated for you there is no need to to add a custom constructor with code to be
+called at initialization. Instead use an init block for any code that you want to be called when your object is initialized.
 
+    Ex.
+    object Game {
+        init {
+            println("Welcome, adventurer")
+        }
+    }
 
+Object Expressions are a one off instance of a class object where the implementer can override class functions if they so
+choose. A lot like normal class objects in Java. If Object declaration is likened to a singleton this is a much smaller scope.
+Below we override the load() function in Townsquare to say something else.
+
+    Ex.
+    val abandonedTownSquare = object: TownSqaure() {
+        override fun load() = "You anticipate applause, but no one is here...."
+    }
+
+Companion objects are useful for tying in initialization of an object to a class instance. A companion object is declared
+within another class declaration using the companion modifier. A class can have no more than 1 companion object.
+There are 2 cases in which a companion object will be initialized:
+    1) A companion object is initialized when its enclosing class is initialized. This makes is a good place for singleton
+       data that has a contextual connection to a class definition.
+    2) A companion object is initialized when one of its properties or functions is accessed directly.
+
+A companion object is still a type of objection declaration so you do not need a instance of a class to use any of the functions
+or properties defined in it.
+
+    Ex.
+    class PremadeWorldMap {
+        companion object {
+            private const val MAPS_FILEPATH = "nyethack.maps"
+
+            fun load() = File(MAPS_FILEPATH).readBytes()
+        }
+    }
+
+Here if you wanted to call load from elsewhere you would not need an instance of PremadeWorldMap:
+
+    Ex. PremadeWorldMap.load()
+
+Companion objects are the Kotlin equivalent to the static keyword in Java.
+
+Data Classes -  classes designed specifically for holding data and they come with some powerful data manipulation benefits.
+Data Classes in Kotlin would be the equivalent of Model classes in Java.
