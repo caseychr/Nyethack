@@ -2,17 +2,19 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a4d803ca-12b1-4766-9ed9-b259364b19d4" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Navigation.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Creature.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Big Nerd Ranch Kotlin" beforeDir="false" afterPath="$PROJECT_DIR$/Big Nerd Ranch Kotlin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/NyetHack/GameKt.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/NyetHack/META-INF/NyetHack.kotlin_module" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/NyetHack/Player$hometown$2.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/NyetHack/Player.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/NyetHack/Game$GameInput.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/NyetHack/Game$GameInput.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/NyetHack/Game.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/NyetHack/Game.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/NyetHack/GameKt.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/NyetHack/GameKt.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/NyetHack/Player$hometown$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/NyetHack/Player$hometown$2.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/NyetHack/Player.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/NyetHack/Player.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/NyetHack/Room.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/NyetHack/Room.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/NyetHack/TownSquare.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/NyetHack/TownSquare.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Game.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/Game.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Player.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/Player.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Room.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/Room.kt" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -113,21 +115,12 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>
     </option>
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="kotlin-line">
-          <url>file://$PROJECT_DIR$/src/Player.kt</url>
-          <line>21</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>

@@ -428,3 +428,95 @@ Companion objects are the Kotlin equivalent to the static keyword in Java.
 
 Data Classes -  classes designed specifically for holding data and they come with some powerful data manipulation benefits.
 Data Classes in Kotlin would be the equivalent of Model classes in Java.
+
+Generics
+A generic type is a class that accepts an input of any type in its constructor.
+
+    Ex.
+    class LootBox<T>(item: T) {
+        var open = false
+        private var loot: T = item
+    }
+
+Generic type parameters also work with functions
+
+    Ex.
+    fun fetch(): T? {
+            return loot.takeIf{open}
+    }
+
+A generic function or type can also support multiple generic type parameters. Suppose if you wanted to convert one
+generic type into another generic type. For example if you wanted to convert type Coin into type Fedora. Here we add a
+new generic type parameter to the function 'R' since the generic type parameter will be used for fetch's return type. We
+also specify that the lookModFunction accepts an argument o f 'T' and returns a result of type 'R'.
+
+    Ex.
+    fun <R> fetch(lootModFunction: (T) -> R): R? {
+            return lootModFunction(loot).takeIf { open }
+        }
+
+You can also restrict a generic class to only be of a certain generic type. In the Example below adding : Loot inside the <>
+specifies that 'T' has to be a subclass of Loot.
+
+    Ex.
+    class LootBox<T : Loot>(item: T) {
+        var open = false
+        private var loot: T = item
+
+        fun fetch(): T? {
+            return loot.takeIf{open}
+        }
+
+        fun <R> fetch(lootModFunction: (T) -> R): R? {
+            return lootModFunction(loot).takeIf { open }
+        }
+    }
+
+What if you wanted to hold more than one item at a time? Multiple items of 'T' type? You can modify the primary constructor
+using 'vararg'.
+
+    Ex.
+    class LootBox<T : Loot>(vararg item: T) {
+        var open = false
+        private var loot: Array<out T> = item
+
+        fun fetch(item: Int): T? {
+            return loot[item].takeIf{open}
+        }
+
+        fun <R> fetch(item: Int, lootModFunction: (T) -> R): R? {
+            return lootModFunction(loot[item]).takeIf { open }
+        }
+    }
+
+in & out using Generics
+There are 2 roles a generic paramter can be assigned to; producer OR consumer. The role of producer means that a generic
+parameter will be readable (but on writeable) and consumer means the generic is writeable (but not readable). When you add
+the OUT keyword to Barrel<out T> you specify that the generic would act as a producer (it would be readable). That meant
+that defining item with the VAR keyword was no longer permitted.
+
+    Ex. of OUT
+    class Barrel<out T>(val item: T)
+
+    fun main(args: Array<String>) {
+        var fedoraBarrel: Barrel<Fedora> = Barrel(Fedora("a generic-looking fedora", 15))
+        var lookBarrel: Barrel<Loot> = Barrel(Coin(15))
+
+        lookBarrel = fedoraBarrel
+        val myFedora: Fedora = lookBarrel.item
+    }
+
+The opposite assignment is possible because the compiler can be certain you would never be able to produce Loot from
+Barrel containing Fedoras - leading to the possibility of class cast exceptions. You remove the VAL keyword from Barrel
+because Barrel is now a consumer - it accepts a value, but it does not produce one. Therefore, you also drop the item lookup.
+This is how the compiler is able to reason that the assignment you have made is a safe one.
+
+    Ex. of IN
+    class Barrel<in T>(item: T)
+
+    fun main(args: Array<String>) {
+        var fedoraBarrel: Barrel<Fedora> = Barrel(Fedora("a generic-looking fedora", 15))
+        var lookBarrel: Barrel<Loot> = Barrel(Coin(15))
+
+        fedoraBarrel = lookBarrel
+    }
