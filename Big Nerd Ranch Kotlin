@@ -520,3 +520,97 @@ This is how the compiler is able to reason that the assignment you have made is 
 
         fedoraBarrel = lookBarrel
     }
+
+Extensions
+Extensions are an alternative to the sharing behavior of inheritance. They are good fit for adding functionality to a
+type when you do not control the definition of the class or when a class is not marked with the open keyword, making it
+ineligible for subclassing.
+
+    Ex.
+    fun String.addEnthusiasm(amount: Int=1) = this + "!".repeat(amount)
+
+Extensions functions are defined in the same way as other functions, with one major difference: When you specify an
+extension function, you also specify the type the extension adds functionality to, known as the RECEIVER TYPE. In the
+example above the receiver type is String.
+
+INFIX keyword is available for both extension and class functions that have a single argument, allows for the cleaner
+syntax you see in the function call. Really only helps with syntax
+
+    Ex.
+    infix fun String?.printWithDefault(default: String) = print(this ?: default)
+    leads to
+    null printWithDefault "Default string"
+
+    Without infix it would look like
+    null.printWithDefault("Default string")
+
+Functional Programming
+There are 3 broad categories of functions that compose a functional program: transforms, filters and combines. Functions
+in functional programming are also designed to be composable, meaning that simple functions can be combined to build complex
+behavior.
+
+Transforms
+A transform function works on the contents of a collection by walking through the collection and transforming each item with a
+transformer function provided as an argument. The transform function then returns a copy of the modified collection, and execution
+proceeds to the next function in the chain. Two commonly used transforms are MAP and FLATMAP.
+
+    Ex.
+    val animals = listOf("zebra", "giraffe", "elephant", "rat")
+    val babies = animals.map { animal -> "A baby $animal" }.map { baby -> "$baby, with the cutest little tail ever!" }
+    println(babies)
+
+    Output:
+    [A baby zebra, with the cutest little tail ever!, A baby giraffe, with the cutest little tail ever!,
+    A baby elephant, with the cutest little tail ever!, A baby rat, with the cutest little tail ever!]
+
+Notice printing the original elements they were not modified in any way. MAP returns a new copy of the collection
+    val animals = listOf("zebra", "giraffe", "elephant", "rat")
+    println(animals)
+    [zebra, giraffe, elephant, rat]
+
+The flatmap function works with a collection of collections and returns a single, "flattened" collection containing all of
+the elements of the input collections.
+
+    Ex.
+    listOf(listOf(1,2,3), listOf(4,5,6)).flatMap { it }
+    res2: kotlin.collections.List<kotlin.Int> = [1, 2, 3, 4, 5, 6]
+
+The result is a new list with all the elements from the 2 original sublists.
+
+Filters
+A filter function accepts a predicate function that checks each element in a collection against a condition and returns
+either true or false. If the predicate returns true, the element is added to the new collection that the filter returns.
+If the predicate returns false, the element is excluded from the new collection.
+
+    Ex.
+    val itemsOfManyColors = listOf(listOf("red apple", "green apple", "blue apple"), listOf("red fish", "blue fish"), listOf("yellow banana", "teal banana"))
+    val redItems = itemsOfManyColors.flatMap { it.filter { it.contains("red") } }
+    println(redItems)
+
+    Output:
+    [red apple, red fish]
+
+
+Combines
+Combines functions take different collections and merge them into a new one. Below we use the ZIP combining function to
+combine 2 lists: employees and their respective shirt sizes. ZIP then returns a new list, a collection of Pairs. You then call
+toMap() on the result list as you can whenever you have a list of Pairs
+
+    Ex.
+    val employees  = listOf("Denny", "Claudette", "Peter")
+    val shirtSize = listOf("large", "x-large", "medium")
+    val employeeShirtSizes = employees.zip(shirtSize).toMap()
+    println(employeeShirtSizes["Denny"])
+
+    Output:
+    large
+
+Java Interoperability
+
+For method overloading mark the Kotlin function with @JvmOverloads
+    Ex.
+    @JvmOverloads
+    fun handOverFood(leftHand: String = "berries", rightHand: String = "beef") {
+        println("Mmmm... you hand over some delicious $leftHand and $rightHand")
+    }
+

@@ -1,3 +1,4 @@
+import extensions.random
 import java.io.File
 import java.lang.Exception
 import java.lang.IllegalStateException
@@ -58,8 +59,8 @@ fun main(args: Array<String>) {
     }
 
     (0..9).forEach {
-        val first = patronList.shuffled().first()
-        val last = lastName.shuffled().first()
+        val first = patronList.random()
+        val last = lastName.random()
         val name = "$first $last"
         //println(name)
         uniquePatrons += name

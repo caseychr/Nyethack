@@ -1,3 +1,4 @@
+import extensions.random as randomizer
 import java.io.File
 import java.util.*
 
@@ -63,5 +64,5 @@ class Player(_name: String, override var healthPoints: Int,
     }
 
     private fun selectHometown() = File("data/towns.txt")
-        .readText().split("\n").shuffled().first()
+        .readText().split("\n").randomizer()
 }
