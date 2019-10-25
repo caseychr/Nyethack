@@ -614,3 +614,50 @@ For method overloading mark the Kotlin function with @JvmOverloads
         println("Mmmm... you hand over some delicious $leftHand and $rightHand")
     }
 
+
+
+Coroutines
+Allow you to specify work that happens in the background of your application or asynchronously.
+
+Grade needs to enable coroutines usability:
+
+app/build.gradle:
+
+    Ex.
+    kotlin {
+        experimental {
+            coroutines 'enable'
+        }
+    }
+
+    dependencies {
+        implementation fileTree(dir: 'libs', include: ['*.jar'])
+        implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:0.27.0-eap13"
+    }
+
+Now you can use coroutines.
+
+One way to create a coroutine is to use the ASYNC function provided with the coroutine library. The ASYNC function
+requires one argument: a lambda that specifies the work you want to happen in the background. We also want to update the
+return type to be DEFERRED:
+
+    Ex.
+    fun fetchCharacterData(): Deferred<CharacterGenerator.CharacterData> {
+        return  async {
+            val apiData = URL(CHARACTER_DATA_API).readText()
+            CharacterGenerator.fromApiData(apiData)
+        }
+    }
+
+Above, instead of returning CharacterData, the fetchCharacterData function returns a Deferred<CharacterGenerator.CharacterData>.
+A Defferred is like a promise for the future results. No data is actually returned until you request it
+
+On the main thread you then create the new coroutine by calling the LAUNCH function. LAUNCH starts the work that you
+specify in a new coroutine immediately. You include  UI as the first argument to launch (UI specifies the corouting context).
+where the work specified within the lambda will be performed -  as Android's UI thread.
+
+    Ex.
+    launch(UI) {
+                    characterData = fetchCharacterData().await()
+                    displayCharacterData()
+                }
